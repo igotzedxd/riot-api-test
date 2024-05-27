@@ -1,0 +1,21 @@
+.accounts {
+  position: fixed;
+  width: 15dvw;
+  inset: 0;
+  height: 100dvh;
+}
+
+.addForm {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}
+
+.addForm input {
+  width: 200px;
+}
+
+.addForm button {
+  width: 100px;
+  margin-left: 50px;
+}
