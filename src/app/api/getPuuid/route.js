@@ -43,7 +43,7 @@ export async function GET(request) {
 
     console.log("Account API Response Data:", accountResponse.data); // Log response data
     const puuid = accountResponse.data.puuid;
-
+    console.log(puuid);
     return new Response(JSON.stringify({ puuid }), { status: 200 });
   } catch (error) {
     console.error("Error Response:", error.response?.data || error.message); // Log error response

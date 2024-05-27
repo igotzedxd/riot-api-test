@@ -10,6 +10,8 @@ const FetchPUUID = () => {
     serverRegion,
     puuid,
     setPuuid,
+    riotId,
+    setRiotId,
     matchData,
     setMatchData,
     matchDetails,
@@ -26,12 +28,16 @@ const FetchPUUID = () => {
     }
   }, [summonerName, serverRegion]);
 
+  useEffect(() => {
+    if (puuid) {
+      fetchRiotId(puuid);
+    }
+  }, [puuid]);
+
   const fetchPuuid = async (summonerName, serverRegion) => {
     setLoading(true);
+    setError(null);
     try {
-      console.log("Fetching PUUID with Summoner Name:", summonerName);
-      console.log("Using Platform Region:", serverRegion);
-
       const response = await fetch(
         `/api/getPuuid?summonerName=${encodeURIComponent(
           summonerName
@@ -40,15 +46,33 @@ const FetchPUUID = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Received PUUID:", data.puuid);
         setPuuid(data.puuid);
         fetchMatchData(data.puuid, serverRegion);
       } else {
-        console.error("Error fetching PUUID:", data.error);
         setError(data.error);
       }
     } catch (err) {
-      console.error("Error in fetchPuuid:", err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRiotId = async (puuid) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/getRiotID?puuid=${puuid}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setRiotId(data.gameName);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error);
+      }
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -57,6 +81,7 @@ const FetchPUUID = () => {
 
   const fetchMatchData = async (puuid, region) => {
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`/api/getMatchData?puuid=${puuid}&region=${region}`);
       const data = await response.json();
@@ -75,6 +100,7 @@ const FetchPUUID = () => {
 
   const fetchMatchDetails = async (matchId) => {
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`/api/getMatchDetails?matchId=${matchId}`);
       const data = await response.json();
@@ -93,23 +119,17 @@ const FetchPUUID = () => {
 
   return (
     <div className={styles.matchHistory}>
-      <h1>League of Legends Data Fetcher</h1>
-      {loading && <p>Loading...</p>}
-      {error && (
-        <p style={{ color: "red" }}>{typeof error === "object" ? JSON.stringify(error) : error}</p>
-      )}
-      {puuid && <p>PUUID: {puuid}</p>}
+      {riotId}
       {matchData.length > 0 && (
         <div>
           <h2>Match Data</h2>
-          <ul>
+          <div className={styles.matchesContainer}>
             {matchData.map((matchId) => (
-              <li key={matchId}>
+              <div key={matchId} onClick={() => fetchMatchDetails(matchId)}>
                 {matchId}
-                <button onClick={() => fetchMatchDetails(matchId)}>View Details</button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
       {matchDetails && matchDetails.info && (

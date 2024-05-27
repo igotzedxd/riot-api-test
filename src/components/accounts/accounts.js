@@ -31,7 +31,6 @@ const Accounts = () => {
   const handleAddAccount = (e) => {
     e.preventDefault();
     setError("");
-
     if (!accountName || !serverRegion) {
       setError("Account name and server region are required");
       return;
@@ -65,6 +64,7 @@ const Accounts = () => {
   const handleSelectAccount = (account) => {
     setSummonerName(account.accountName);
     setContextServerRegion(account.serverRegion);
+    console.log("Selected account:", account);
   };
 
   return (

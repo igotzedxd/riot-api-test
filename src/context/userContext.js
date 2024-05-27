@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
   const [summonerName, setSummonerName] = useState("");
   const [serverRegion, setServerRegion] = useState("");
   const [puuid, setPuuid] = useState("");
+  const [riotId, setRiotId] = useState(""); // Add this line
   const [matchData, setMatchData] = useState([]);
   const [matchDetails, setMatchDetails] = useState(null);
   const [error, setError] = useState(null);
@@ -29,6 +30,8 @@ export const UserProvider = ({ children }) => {
         setServerRegion,
         puuid,
         setPuuid,
+        riotId,
+        setRiotId,
         matchData,
         setMatchData,
         matchDetails,
