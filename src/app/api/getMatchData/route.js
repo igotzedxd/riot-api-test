@@ -25,8 +25,8 @@ export async function GET(request) {
       }
     );
 
-    const matchData = response.data;
-    return new Response(JSON.stringify({ matchData }), { status: 200 });
+    const matchHistory = response.data;
+    return new Response(JSON.stringify({ matchHistory }), { status: 200 });
   } catch (error) {
     console.error("Error Response:", error.response?.data || error.message); // Log error response
     return new Response(JSON.stringify({ error: error.response?.data || error.message }), {

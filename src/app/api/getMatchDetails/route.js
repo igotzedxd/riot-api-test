@@ -22,7 +22,7 @@ export async function GET(request) {
     );
 
     const matchDetails = response.data;
-    return new Response(JSON.stringify({ matchDetails }), { status: 200 });
+    return new Response(JSON.stringify({ matchDetails }), { status: 201 });
   } catch (error) {
     console.error("Error Response:", error.response?.data || error.message); // Log error response
     return new Response(JSON.stringify({ error: error.response?.data || error.message }), {
