@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useUserContext } from "@/context/userContext";
 import styles from "./accounts.module.css";
+import Image from "next/image";
 
 const Accounts = () => {
   const [accountName, setAccountName] = useState("");
   const [serverRegion, setServerRegion] = useState("");
   const [localError, setLocalError] = useState("");
-  const { accounts, addAccount, selectAccount, error, setError } = useUserContext();
+  const { accounts, addAccount, selectAccount, error, setError, matchDetails, setMatchDetails } =
+    useUserContext();
 
   const handleAddAccount = async (e) => {
     e.preventDefault();
@@ -58,8 +60,30 @@ const Accounts = () => {
         <h3>Account List</h3>
         <ul>
           {accounts &&
+            accounts.map(
+              (account) =>
+                matchDetails &&
+                matchDetails.info &&
+                matchDetails.info.participants.map(
+                  (participant, index) =>
+                    participant.riotIdGameName === account.accountName && (
+                      <Image
+                        key={index}
+                        src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${participant.profileIcon}.png`}
+                        width={50}
+                        height={50}
+                        alt="profile icon"
+                      />
+                    )
+                )
+            )}
+          {accounts &&
             accounts.map((account, index) => (
-              <li key={index} onClick={() => selectAccount(account)}>
+              <li
+                key={index}
+                onClick={() => selectAccount(account)}
+                className={account.selected ? styles.selected : ""}
+              >
                 {account.accountName}#{account.tagLine} - {account.serverRegion}
               </li>
             ))}

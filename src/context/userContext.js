@@ -74,34 +74,27 @@ export const UserProvider = ({ children }) => {
       return;
     }
 
-    // Convert tagLine to uppercase
     const upperCaseTagLine = tagLine.toUpperCase();
 
-    // Fetch PUUID first
     const puuid = await fetchPuuid(accountName, upperCaseTagLine, region.platform);
     if (!puuid) return;
-    console.log(puuid);
-    const correctName = puuid.gameName; // Since correctRiotId doesn't contain a tagLine, use it directly.
-
-    if (!correctName || !upperCaseTagLine) {
-      const errorMessage = "Failed to parse Riot ID";
-      console.error("addAccount error:", errorMessage);
-      setError(errorMessage);
-      return;
-    }
 
     const newAccount = {
-      accountName: correctName,
+      accountName: puuid.gameName,
       tagLine: upperCaseTagLine,
       serverRegion: region.platform,
-      puuid,
+      puuid: puuid.puuid,
+      selected: false,
     };
+
+    console.log("hehe", puuid.puuid);
+
     let storedAccounts = JSON.parse(localStorage.getItem("accounts")) || [];
 
     if (
       storedAccounts.some(
         (acc) =>
-          acc.accountName === correctName &&
+          acc.accountName === accountName &&
           acc.tagLine === upperCaseTagLine &&
           acc.serverRegion === region.platform
       )
@@ -112,17 +105,32 @@ export const UserProvider = ({ children }) => {
       return;
     }
 
+    if (storedAccounts.length === 0) {
+      newAccount.selected = true;
+    }
+
     storedAccounts.push(newAccount);
     localStorage.setItem("accounts", JSON.stringify(storedAccounts));
     setAccounts([...storedAccounts]);
     console.log("Account added successfully:", newAccount);
   };
 
-  const selectAccount = (account) => {
-    console.log("Selecting account:", account);
-    setSummonerName(`${account.accountName}#${account.tagLine}`);
-    setServerRegion(account.serverRegion);
-    setPuuid(account.puuid.puuid); // Set the PUUID directly
+  const selectAccount = (selectedAccount) => {
+    console.log("Selecting account:", selectedAccount);
+    setSummonerName(`${selectedAccount.accountName}#${selectedAccount.tagLine}`);
+    setServerRegion(selectedAccount.serverRegion);
+    setPuuid(selectedAccount.puuid);
+
+    const updatedAccounts = accounts.map((account) =>
+      account.accountName === selectedAccount.accountName &&
+      account.tagLine === selectedAccount.tagLine &&
+      account.serverRegion === selectedAccount.serverRegion
+        ? { ...account, selected: true }
+        : { ...account, selected: false }
+    );
+
+    localStorage.setItem("accounts", JSON.stringify(updatedAccounts));
+    setAccounts(updatedAccounts);
   };
 
   const fetchMatchData = async (puuid, region) => {
@@ -157,6 +165,7 @@ export const UserProvider = ({ children }) => {
 
       if (response.ok) {
         setMatchDetails(data.matchDetails);
+        console.log("Fetched match details:", data.matchDetails);
       } else {
         const errorMessage = data.error || "Failed to fetch match details";
         console.error("fetchMatchDetails error:", errorMessage);

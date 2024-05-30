@@ -2,6 +2,7 @@
 
 import { useUserContext } from "@/context/userContext";
 import styles from "./matchHistory.module.css";
+import Image from "next/image";
 
 const MatchHistory = () => {
   const { riotId, matchData, matchDetails, fetchMatchDetails, error } = useUserContext();
@@ -27,7 +28,15 @@ const MatchHistory = () => {
           <h2>Match Details</h2>
           <ul>
             {matchDetails.info.participants.map((participant, index) => (
-              <li key={index}>{participant.riotIdGameName}</li>
+              <div key={index}>
+                <Image
+                  src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${participant.profileIcon}.png`}
+                  width={50}
+                  height={50}
+                  alt="champion"
+                />{" "}
+                <span>{participant.riotIdGameName}</span>
+              </div>
             ))}
           </ul>
         </div>
