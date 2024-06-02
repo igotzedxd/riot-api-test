@@ -5,15 +5,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  const [accounts, setAccounts] = useState([]);
   const [summonerName, setSummonerName] = useState("");
   const [serverRegion, setServerRegion] = useState("");
   const [puuid, setPuuid] = useState("");
-  const [riotId, setRiotId] = useState("");
   const [matchData, setMatchData] = useState([]);
   const [matchDetails, setMatchDetails] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
     const storedAccounts = JSON.parse(localStorage.getItem("accounts")) || [];
@@ -32,6 +31,8 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const fetchPuuid = async (accountName, tagLine, serverRegion) => {
+    console.log("Fetching PUUIDXD:", accountName, tagLine, serverRegion);
+
     try {
       const response = await fetch(
         `/api/getPuuid?accountName=${encodeURIComponent(accountName)}&tagLine=${encodeURIComponent(
@@ -195,8 +196,6 @@ export const UserProvider = ({ children }) => {
         setServerRegion,
         puuid,
         setPuuid,
-        riotId,
-        setRiotId,
         matchData,
         setMatchData,
         matchDetails,
